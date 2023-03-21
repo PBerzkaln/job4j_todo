@@ -17,7 +17,7 @@ public class HbnTaskRepository implements TaskRepository {
     private final SessionFactory sf;
 
     @Override
-    public Task save(Task task) {
+    public Optional<Task> save(Task task) {
         Session session = sf.openSession();
         try {
             session.beginTransaction();
@@ -25,10 +25,11 @@ public class HbnTaskRepository implements TaskRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+            return Optional.empty();
         } finally {
             session.close();
         }
-        return task;
+        return Optional.of(task);
     }
 
     @Override
