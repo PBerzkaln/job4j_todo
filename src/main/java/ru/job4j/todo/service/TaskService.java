@@ -12,6 +12,8 @@ public interface TaskService {
 
     boolean update(Task task);
 
+    boolean setIsDone(int id);
+
     Optional<Task> findById(int id);
 
     Collection<Task> findByIsDone(boolean done);

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +67,25 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
+    public boolean setIsDone(int id) {
+        var session = sf.openSession();
+        int rsl = 0;
+        try {
+            session.beginTransaction();
+            rsl = session.createQuery("UPDATE Task SET done = :fdone WHERE id = :fId")
+                    .setParameter("fId", id)
+                    .setParameter("fdone", Boolean.TRUE)
+                    .executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return rsl > 0;
+    }
+
+    @Override
     public Optional<Task> findById(int id) {
         Optional<Task> rsl = Optional.empty();
         var session = sf.openSession();
@@ -86,7 +104,7 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Collection<Task> findByIsDone(boolean done) {
+    public List<Task> findByIsDone(boolean done) {
         List<Task> rsl = new ArrayList<>();
         var session = sf.openSession();
         try {
@@ -104,7 +122,7 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Collection<Task> findAll() {
+    public List<Task> findAll() {
         List<Task> rsl = new ArrayList<>();
         var session = sf.openSession();
         try {

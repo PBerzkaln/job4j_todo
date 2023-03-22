@@ -68,18 +68,16 @@ public class TaskController {
     public String getById(Model model, @PathVariable int id) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдена");
+            model.addAttribute("message", "Задание с указанным идентификатором не найдено");
             return "errors/404";
         }
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
 
-    @GetMapping("/execute/{id}")
-    public String getTaskStatusDone(@PathVariable int id, Model model) {
-        var task = taskService.findById(id).get();
-        task.setDone(true);
-        var updateRsl = taskService.update(task);
+    @PostMapping("/execute/{id}")
+    public String setTaskStatusDone(@PathVariable int id, Model model) {
+        var updateRsl = taskService.setIsDone(id);
         if (!updateRsl) {
             model.addAttribute("message",
                     "Не удалось установить заданию статус \"исполнено\"");
@@ -88,9 +86,8 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        var task = taskService.findById(id).get();
         var deleteRsl = taskService.deleteById(id);
         if (!deleteRsl) {
             model.addAttribute("message", "Не удалось удалить задание");
