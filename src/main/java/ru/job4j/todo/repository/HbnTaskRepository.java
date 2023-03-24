@@ -1,6 +1,8 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
@@ -11,50 +13,59 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class HbnTaskRepository implements TaskRepository {
+    private static final Logger LOG = LogManager.getLogger(HbnUserRepository.class.getName());
     private final CrudRepository crudRepository;
 
     @Override
     public Optional<Task> save(Task task) {
+        Optional<Task> rsl = Optional.empty();
         try {
-            crudRepository.run(session -> session.save(task));
+            crudRepository.run((session -> session.save(task)));
+            rsl = Optional.of(task);
         } catch (Exception e) {
-            return Optional.empty();
+            LOG.debug(e.getMessage());
         }
-        return Optional.of(task);
+        return rsl;
     }
 
     @Override
     public boolean deleteById(int id) {
+        boolean rsl = false;
         try {
             crudRepository.run("DELETE Task WHERE id = :fId",
                     Map.of("fId", id)
             );
+            rsl = true;
         } catch (Exception e) {
-            return false;
+            LOG.debug(e.getMessage());
         }
-        return true;
+        return rsl;
     }
 
     @Override
     public boolean update(Task task) {
+        boolean rsl = false;
         try {
             crudRepository.run(session -> session.merge(task));
+            rsl = true;
         } catch (Exception e) {
-            return false;
+            LOG.debug(e.getMessage());
         }
-        return true;
+        return rsl;
     }
 
     @Override
     public boolean setIsDone(int id) {
+        boolean rsl = false;
         try {
             crudRepository.run("UPDATE Task SET done = :fdone WHERE id = :fId",
                     Map.of("fId", id, "fdone", Boolean.TRUE)
             );
+            rsl = true;
         } catch (Exception e) {
-            return false;
+            LOG.debug(e.getMessage());
         }
-        return true;
+        return rsl;
     }
 
     @Override

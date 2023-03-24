@@ -1,6 +1,8 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
@@ -10,16 +12,19 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class HbnUserRepository implements UserRepository {
+    private static final Logger LOG = LogManager.getLogger(HbnUserRepository.class.getName());
     private final CrudRepository crudRepository;
 
     @Override
     public Optional<User> save(User user) {
+        Optional<User> rsl = Optional.empty();
         try {
-            crudRepository.run(session -> session.save(user));
+            crudRepository.run((session -> session.save(user)));
+            rsl = Optional.of(user);
         } catch (Exception e) {
-            return Optional.empty();
+            LOG.debug(e.getMessage());
         }
-        return Optional.of(user);
+        return rsl;
     }
 
     @Override
