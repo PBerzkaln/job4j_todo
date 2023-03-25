@@ -23,7 +23,7 @@ public class HbnTaskRepository implements TaskRepository {
             crudRepository.run((session -> session.save(task)));
             rsl = Optional.of(task);
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
         return rsl;
     }
@@ -37,7 +37,7 @@ public class HbnTaskRepository implements TaskRepository {
             );
             rsl = true;
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
         return rsl;
     }
@@ -49,7 +49,7 @@ public class HbnTaskRepository implements TaskRepository {
             crudRepository.run(session -> session.merge(task));
             rsl = true;
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
         return rsl;
     }
@@ -63,7 +63,7 @@ public class HbnTaskRepository implements TaskRepository {
             );
             rsl = true;
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
         return rsl;
     }

@@ -22,7 +22,7 @@ public class HbnUserRepository implements UserRepository {
             crudRepository.run((session -> session.save(user)));
             rsl = Optional.of(user);
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
         return rsl;
     }
