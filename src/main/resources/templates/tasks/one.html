@@ -54,6 +54,8 @@
                             Выполнено</p>
                         <p type="text" class="form-control" id="done1" th:if="${!task.done}" style="color: Red">В
                             работе</p>
+                        <label for="priority" class="form-label"><b>Приоритет</b></label>
+                        <p type="text" class="form-control" id="priority" th:text="${task.priority}"></p>
                     </div>
                 </div>
 

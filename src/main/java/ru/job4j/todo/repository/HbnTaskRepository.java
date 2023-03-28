@@ -70,20 +70,21 @@ public class HbnTaskRepository implements TaskRepository {
 
     @Override
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("FROM Task WHERE id = :fId",
+        return crudRepository.optional("FROM Task f JOIN FETCH f.priority WHERE f.id = :fId",
                 Task.class, Map.of("fId", id)
         );
     }
 
     @Override
     public List<Task> findByIsDone(boolean done) {
-        return crudRepository.query("FROM Task WHERE done = :fdone",
+        return crudRepository.query("FROM Task f JOIN FETCH f.priority WHERE f.done = :fdone",
                 Task.class, Map.of("fdone", done)
         );
     }
 
     @Override
     public List<Task> findAll() {
-        return crudRepository.query("FROM Task", Task.class);
+        return crudRepository.query(
+                "FROM Task f JOIN FETCH f.priority", Task.class);
     }
 }
