@@ -61,7 +61,7 @@
                     <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:if="${task.done}" style="color: Green">Выполнено</td>
                     <td th:if="${!task.done}" style="color: Red">В работе</td>
-                    <td th:text="${task.priority}"></td>
+                    <td th:text="${task.priority.name}"></td>
                 </tr>
                 </tbody>
             </table>

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 @AllArgsConstructor
 public class TaskController {
     private final TaskService taskService;
+    private final PriorityService priorityService;
 
     /**
      * Страница со списком всех заданий.
@@ -45,7 +47,8 @@ public class TaskController {
     }
 
     @GetMapping("/create")
-    public String getCreationPage() {
+    public String getCreationPage(Model model) {
+        model.addAttribute("priorities", priorityService.findAll());
         return "tasks/create";
     }
 
@@ -54,7 +57,8 @@ public class TaskController {
         var user = (User) session.getAttribute("user");
         task.setUser(user);
         var savedTask = taskService.save(task);
-        if (savedTask.isEmpty()) {
+        var savedPriority = priorityService.findById(task.getPriority().getId());
+        if (savedTask.isEmpty() || savedPriority.isEmpty()) {
             model.addAttribute("message",
                     String.format("%s%s", "Не удалось сохранить задание, вероятно оно уже существует.",
                             "Перейдите на страницу создания задания и попробуйте снова."));
@@ -76,6 +80,7 @@ public class TaskController {
             model.addAttribute("message", "Задание с указанным идентификатором не найдено");
             return "errors/404";
         }
+        model.addAttribute("priorities", priorityService.findAll());
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
@@ -108,15 +113,19 @@ public class TaskController {
             model.addAttribute("message", "Задание не найдено");
             return "errors/404";
         }
+        model.addAttribute("priorities", priorityService.findAll());
         model.addAttribute("task", taskOptional.get());
         return "tasks/edit";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
+    public String update(@ModelAttribute Task task, Model model, HttpSession httpSession) {
         try {
+            var user = (User) httpSession.getAttribute("user");
+            task.setUser(user);
             var isUpdated = taskService.update(task);
-            if (!isUpdated) {
+            var savedPriority = priorityService.findById(task.getPriority().getId());
+            if (!isUpdated || savedPriority.isEmpty()) {
                 model.addAttribute("message", "Не удалось отредактировать задание");
                 return "errors/404";
             }
