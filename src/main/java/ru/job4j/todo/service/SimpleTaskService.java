@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.TaskRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,12 +41,12 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public Collection<Task> findByIsDone(boolean done) {
+    public List<Task> findByIsDone(boolean done) {
         return taskRepository.findByIsDone(done);
     }
 
     @Override
-    public Collection<Task> findAll() {
+    public List<Task> findAll() {
         return taskRepository.findAll();
     }
 }

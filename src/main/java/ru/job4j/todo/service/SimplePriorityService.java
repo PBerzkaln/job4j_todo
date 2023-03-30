@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.repository.PriorityRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +21,7 @@ public class SimplePriorityService implements PriorityService {
     }
 
     @Override
-    public Collection<Priority> findAll() {
+    public List<Priority> findAll() {
         return priorityRepository.findAll();
     }
 }

@@ -51,6 +51,7 @@
                     <th scope="col">Дата создания</th>
                     <th scope="col">Статус исполнения</th>
                     <th scope="col">Приоритет</th>
+                    <th scope="col">Категория</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -62,6 +63,11 @@
                     <td th:if="${task.done}" style="color: Green">Выполнено</td>
                     <td th:if="${!task.done}" style="color: Red">В работе</td>
                     <td th:text="${task.priority.name}"></td>
+                    <td>
+                        <span th:each="category: ${task.categories}">
+                            <p th:text="${category.name}"></p>
+                        </span>
+                    </td>
                 </tr>
                 </tbody>
             </table>

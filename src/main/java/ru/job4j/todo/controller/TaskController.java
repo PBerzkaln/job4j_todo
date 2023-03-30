@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpSession;
 public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     /**
      * Страница со списком всех заданий.
@@ -31,6 +33,7 @@ public class TaskController {
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("tasks", taskService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/list";
     }
 
