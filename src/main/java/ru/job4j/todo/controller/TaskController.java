@@ -12,6 +12,7 @@ import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/tasks")
@@ -33,7 +34,6 @@ public class TaskController {
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("tasks", taskService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
         return "tasks/list";
     }
 
@@ -52,18 +52,22 @@ public class TaskController {
     @GetMapping("/create")
     public String getCreationPage(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model, HttpSession session) {
+    public String create(@ModelAttribute Task task, Model model,
+                         @RequestParam("category.id") List<Integer> list, HttpSession session) {
         var user = (User) session.getAttribute("user");
+        var categoriesList = categoryService.findById(list);
+        task.setCategories(categoriesList);
         task.setUser(user);
         var savedTask = taskService.save(task);
         var savedPriority = priorityService.findById(task.getPriority().getId());
-        if (savedTask.isEmpty() || savedPriority.isEmpty()) {
+        if (savedTask.isEmpty() || savedPriority.isEmpty() || categoriesList.isEmpty()) {
             model.addAttribute("message",
-                    String.format("%s%s", "Не удалось сохранить задание, вероятно оно уже существует.",
+                    String.format("%s%s", "Не удалось сохранить задание.",
                             "Перейдите на страницу создания задания и попробуйте снова."));
             return "errors/404";
         }
@@ -85,6 +89,7 @@ public class TaskController {
         }
         model.addAttribute("priorities", priorityService.findAll());
         model.addAttribute("task", taskOptional.get());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/one";
     }
 
@@ -116,19 +121,23 @@ public class TaskController {
             model.addAttribute("message", "Задание не найдено");
             return "errors/404";
         }
-        model.addAttribute("priorities", priorityService.findAll());
         model.addAttribute("task", taskOptional.get());
+        model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/edit";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model, HttpSession httpSession) {
+    public String update(@ModelAttribute Task task, Model model,
+                         @RequestParam("category.id") List<Integer> list, HttpSession httpSession) {
         try {
             var user = (User) httpSession.getAttribute("user");
+            var categoriesList = categoryService.findById(list);
             task.setUser(user);
+            task.setCategories(categoriesList);
             var isUpdated = taskService.update(task);
             var savedPriority = priorityService.findById(task.getPriority().getId());
-            if (!isUpdated || savedPriority.isEmpty()) {
+            if (!isUpdated || savedPriority.isEmpty() || categoriesList.isEmpty()) {
                 model.addAttribute("message", "Не удалось отредактировать задание");
                 return "errors/404";
             }

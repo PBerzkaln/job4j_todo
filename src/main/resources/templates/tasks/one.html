@@ -56,6 +56,9 @@
                             работе</p>
                         <label for="priority" class="form-label"><b>Приоритет</b></label>
                         <p type="text" class="form-control" id="priority" th:text="${task.priority.name}"></p>
+                        <label for="category" class="form-label"><b>Категория</b></label>
+                        <p type="text" class="form-control" id="category" th:each="category: ${task.categories}"
+                           th:text="${category.name}"></p>
                     </div>
                 </div>
 

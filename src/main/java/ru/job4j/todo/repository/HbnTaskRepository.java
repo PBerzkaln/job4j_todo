@@ -85,6 +85,6 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public List<Task> findAll() {
         return crudRepository.query("SELECT DISTINCT t FROM Task t JOIN FETCH t.priority " +
-                "JOIN FETCH t.categories ORDER BY i.id", Task.class);
+                "JOIN FETCH t.categories ORDER BY t.id", Task.class);
     }
 }
