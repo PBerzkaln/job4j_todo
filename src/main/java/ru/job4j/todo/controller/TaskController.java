@@ -1,5 +1,7 @@
 package ru.job4j.todo.controller;
 
+import static ru.job4j.todo.util.TImeZoneHandler.setZone;
+
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
@@ -32,8 +34,11 @@ public class TaskController {
      * @return
      */
     @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getAll(Model model, HttpSession session) {
+        var tasksToAddZone = taskService.findAll();
+        var user = (User) session.getAttribute("user");
+        tasksToAddZone.forEach(t -> setZone(user, t));
+        model.addAttribute("tasks", tasksToAddZone);
         return "tasks/list";
     }
 
@@ -81,12 +86,14 @@ public class TaskController {
      * Кнопка удалить, удаляет задание и переходит на список всех заданий.
      */
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
+    public String getById(Model model, @PathVariable int id, HttpSession session) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Задание с указанным идентификатором не найдено");
             return "errors/404";
         }
+        var user = (User) session.getAttribute("user");
+        setZone(user, taskOptional.get());
         model.addAttribute("priorities", priorityService.findAll());
         model.addAttribute("task", taskOptional.get());
         model.addAttribute("categories", categoryService.findAll());

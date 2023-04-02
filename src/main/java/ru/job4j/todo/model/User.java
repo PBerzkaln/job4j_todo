@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "todo_user")
@@ -21,4 +22,6 @@ public class User {
     private String name;
     private String login;
     private String password;
+    @Column(name = "user_zone")
+    private String timezone;
 }
