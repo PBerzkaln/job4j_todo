@@ -1,6 +1,6 @@
 package ru.job4j.todo.controller;
 
-import static ru.job4j.todo.util.TImeZoneHandler.setZone;
+import static ru.job4j.todo.util.TimeZoneHandler.setZone;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
